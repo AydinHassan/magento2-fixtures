@@ -4,6 +4,7 @@ namespace TddWizard\Fixtures\Customer;
 
 use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Customer\Api\Data\AddressInterface;
+use Magento\Customer\Api\Data\RegionInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
@@ -15,15 +16,22 @@ class AddressBuilder
      * @var AddressInterface
      */
     private $address;
+
     /**
      * @var AddressRepositoryInterface
      */
     private $addressRepository;
 
-    public function __construct(AddressRepositoryInterface $addressRepository, AddressInterface $address)
+    /**
+     * @var RegionInterface
+     */
+    private $region;
+
+    public function __construct(AddressRepositoryInterface $addressRepository, AddressInterface $address, RegionInterface $region)
     {
         $this->address = $address;
         $this->addressRepository = $addressRepository;
+        $this->region = $region;
     }
 
     public function __clone()
@@ -57,7 +65,10 @@ class AddressBuilder
             ->setLastname('Smith')
             ->setFirstname('John')
             ->setRegionId(1);
-        return new self($objectManager->create(AddressRepositoryInterface::class), $address);
+
+        $region = $objectManager->create(RegionInterface::class);
+
+        return new self($objectManager->create(AddressRepositoryInterface::class), $address, $region);
     }
 
     public function asDefaultShipping() : AddressBuilder
@@ -144,6 +155,15 @@ class AddressBuilder
     {
         $builder = clone $this;
         $builder->address->setCountryId($countryId);
+        return $builder;
+    }
+
+    public function withRegion(string $region) : AddressBuilder
+    {
+        $builder = clone $this;
+        $this->region->setRegion($region);
+        $this->region->setRegionId(0);
+        $builder->address->setRegion($this->region);
         return $builder;
     }
 

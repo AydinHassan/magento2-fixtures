@@ -171,6 +171,20 @@ class CustomerBuilder
         return $builder;
     }
 
+    public function withGender(int $gender) : CustomerBuilder
+    {
+        $builder = clone $this;
+        $builder->customer->setGender($gender);
+        return $builder;
+    }
+
+    public function withDob(string $dob) : CustomerBuilder
+    {
+        $builder = clone $this;
+        $builder->customer->setDob($dob);
+        return $builder;
+    }
+
     public function build() : CustomerInterface
     {
         $builder = clone $this;
